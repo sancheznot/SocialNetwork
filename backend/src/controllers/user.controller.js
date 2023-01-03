@@ -76,7 +76,7 @@ userCtrls.signup = async (req, res) => {
 // sign in controller
 userCtrls.signin = async (req, res) => {
   // Get params from body
-  let { username, email, password } = req.body;
+  const { username, email, password } = req.body;
   // Search on the database
   if (email && password) {
     if (!email || !password) {
@@ -85,41 +85,57 @@ userCtrls.signin = async (req, res) => {
         message: "Missing credentials (email)",
       });
     }
-    User.findOne({ email: email.toLowerCase() }).select({"password":  0}).exec((err, user) => {
-      if (err || !user) {
+    User.findOne({ email: email.toLowerCase() })
+      .select({ password: 0 })
+      .exec((err, user) => {
+        if (err || !user) {
+          return res
+            .status(404)
+            .json({ status: "Error", message: "Email not found" });
+        }
+        // Check password
+        let pwd = bycrypt.compareSync(password, user.password);
+        if (!pwd) {
+          return res.status(400).json({
+            status: "Error",
+            message: "Password incorrect",
+          });
+        }
+        // Token
+        // Return User data
         return res
-          .status(404)
-          .json({ status: "Error", message: "Email not found" });
-      }
-      // Check password
-
-      // Token
-      // Return User data
-      return res
-        .status(200)
-        .json({ status: "Success", message: "Signin successfully", user });
-    });
-  } else if (!email && password) {
+          .status(200)
+          .json({ status: "Success", message: "Signin successfully", user });
+      });
+  } else if (!email) {
     if (!username || !password) {
       return res.status(400).json({
         status: "Error",
         message: "Missing credentials (username)",
       });
     }
-    User.findOne({ username: username.toLowerCase() }, (err, user) => {
-      if (err || !user) {
+    User.findOne({ username: username.toLowerCase() })
+      .select({ password: 0 })
+      .exec((err, user) => {
+        if (err || !user) {
+          return res
+            .status(404)
+            .json({ status: "Error", message: "Username not found" });
+          }
+          // Check password
+          let pwd = bycrypt.compareSync(password, user.password);
+          if (!pwd) {
+            return res.status(400).json({
+              status: "Error",
+              message: "Password incorrect",
+            });
+          }
+        // Token
+        // Return User data
         return res
-          .status(404)
-          .json({ status: "Error", message: "Username not found" });
-      }
-      // Check password
-
-      // Token
-      // Return User data
-      return res
-        .status(200)
-        .json({ status: "Success", message: "Signin successfully", user });
-    });
+          .status(200)
+          .json({ status: "Success", message: "Signin successfully", user });
+      });
   }
 };
 
