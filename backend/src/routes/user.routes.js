@@ -1,11 +1,14 @@
 const { Router } = require("express");
-const { userpueba, signup, signin } = require("../controllers/user.controller");
+const { router } = require("../app");
+const { userpueba, signup, signin, getOneProfile, userList } = require("../controllers/user.controller");
+const { auth } = require("../middleware/auth");
 const routes = Router();
 
-// const username = "sancheznot"
+// const username = "sancheznot" 
 
-routes.get(`/user`, userpueba);
+routes.get(`/user`, auth, userpueba);
 routes.post(`/signup`, signup);
 routes.post(`/signin`, signin);
-
-module.exports = routes;
+routes.get(`/profile/:id`,auth, getOneProfile)
+routes.get(`/list/:page?`, auth, userList)
+module.exports = routes; 

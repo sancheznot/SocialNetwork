@@ -1,10 +1,13 @@
 const userCtrls = {};
 const bycrypt = require("bcrypt");
 const User = require("../models/UserModel");
+// helper token
+const { tokenGenerator } = require("../helpers/jwt");
 
 userCtrls.userpueba = (req, res) => {
   res.status(200).send({
     message: "funciona user",
+    user: req.user,
   });
 };
 
@@ -73,7 +76,7 @@ userCtrls.signup = async (req, res) => {
   });
 };
 
-// sign in controller
+// signin controller
 userCtrls.signin = async (req, res) => {
   // Get params from body
   const { username, email, password } = req.body;
@@ -86,7 +89,7 @@ userCtrls.signin = async (req, res) => {
       });
     }
     User.findOne({ email: email.toLowerCase() })
-      .select({ password: 0 })
+      // .select({ "password": 0 })
       .exec((err, user) => {
         if (err || !user) {
           return res
@@ -94,7 +97,7 @@ userCtrls.signin = async (req, res) => {
             .json({ status: "Error", message: "Email not found" });
         }
         // Check password
-        let pwd = bycrypt.compareSync(password, user.password);
+        const pwd = bycrypt.compareSync(password, user.password);
         if (!pwd) {
           return res.status(400).json({
             status: "Error",
@@ -103,9 +106,11 @@ userCtrls.signin = async (req, res) => {
         }
         // Token
         // Return User data
-        return res
-          .status(200)
-          .json({ status: "Success", message: "Signin successfully", user });
+        return res.status(200).json({
+          status: "Success",
+          message: "Signin successfully",
+          user: { id: user._id, name: user.name, username: user.email },
+        });
       });
   } else if (!email) {
     if (!username || !password) {
@@ -115,28 +120,59 @@ userCtrls.signin = async (req, res) => {
       });
     }
     User.findOne({ username: username.toLowerCase() })
-      .select({ password: 0 })
+      // .select({ "password": 0 })
       .exec((err, user) => {
         if (err || !user) {
           return res
             .status(404)
             .json({ status: "Error", message: "Username not found" });
-          }
-          // Check password
-          let pwd = bycrypt.compareSync(password, user.password);
-          if (!pwd) {
-            return res.status(400).json({
-              status: "Error",
-              message: "Password incorrect",
-            });
-          }
+        }
+        // Check password
+        const pwd = bycrypt.compareSync(password, user.password);
+        if (!pwd) {
+          return res.status(400).json({
+            status: "Error",
+            message: "Password incorrect",
+          });
+        }
         // Token
+        const token = tokenGenerator(user);
         // Return User data
-        return res
-          .status(200)
-          .json({ status: "Success", message: "Signin successfully", user });
+        return res.status(200).json({
+          status: "Success",
+          message: "Signin successfully",
+          user: { id: user._id, name: user.name, username: user.username },
+          token,
+        });
       });
   }
 };
+
+userCtrls.getOneProfile = (req, res) => {
+  // receive id
+  const id = req.params.id;
+  // get data from database
+  User.findById(id) 
+    .select({ password: 0, role: 0 })
+    .exec((err, user) => {
+      if (err || !user) {
+        res.status(404).json({
+          status: "Error",
+          message: "User not found or something went wrong",
+        });
+      }
+      return res.status(200).json({
+        status: "Success",
+        user: user,
+      });
+    });
+};
+
+userCtrls.userList = (req, res) => {
+  res.status(200).json({
+    status: "Success",
+    message: "User list"
+  })
+}
 
 module.exports = userCtrls;
