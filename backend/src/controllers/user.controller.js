@@ -1,6 +1,7 @@
 const userCtrls = {};
 const bycrypt = require("bcrypt");
 const User = require("../models/UserModel");
+const mongoosePagination = require("mongoose-pagination");
 // helper token
 const { tokenGenerator } = require("../helpers/jwt");
 
@@ -152,7 +153,7 @@ userCtrls.getOneProfile = (req, res) => {
   // receive id
   const id = req.params.id;
   // get data from database
-  User.findById(id) 
+  User.findById(id)
     .select({ password: 0, role: 0 })
     .exec((err, user) => {
       if (err || !user) {
@@ -169,10 +170,104 @@ userCtrls.getOneProfile = (req, res) => {
 };
 
 userCtrls.userList = (req, res) => {
-  res.status(200).json({
-    status: "Success",
-    message: "User list"
-  })
-}
+  // controls page
+  let page = 1;
+  if (req.params.page) {
+    page = req.params.page;
+  }
+  page = parseInt(page);
+  // ask with mongoose pagination
+  let itemsPerPage = 5;
+  User.find()
+    .select({ password: 0 })
+    .sort("_id")
+    .paginate(page, itemsPerPage, (error, users, total) => {
+      if (error || !users) {
+        res.status(404).json({
+          status: "Error",
+          message: "No users found",
+          error,
+        });
+      }
+
+      // return result
+      res.status(200).json({
+        status: "Success",
+        users,
+        page,
+        itemsPerPage,
+        total,
+        pages: Math.ceil(total / itemsPerPage),
+      });
+    });
+};
+
+userCtrls.updateProfile = (req, res) => {
+  // get user data to update profile
+  const userIdentity = req.user;
+  let userToUpdate = req.body;
+
+  delete userIdentity.password;
+  delete userIdentity.role;
+  delete userIdentity.iat;
+  delete userIdentity.exp;
+
+  // check if user already exists
+  User.find({
+    $or: [
+      { email: userToUpdate.email.toLowerCase() },
+      { username: userToUpdate.username.toLowerCase() },
+    ],
+  }).exec(async (error, users) => {
+    if (error) {
+      return res.status(500).json({
+        status: "Error",
+        message: "Error on the request",
+      });
+    }
+    let userIsset = false;
+    users.forEach((user) => {
+      if (user && user._id != userIdentity.id) userIsset = true;
+    });
+    if (userIsset) {
+      return res.status(200).json({
+        status: "Success",
+        message: "User already exists",
+      });
+    }
+
+    // if get the password encryted
+    if (userToUpdate.password) {
+      let pwd = await bycrypt.hash(userToUpdate.password, 10);
+      userToUpdate.password = pwd;
+    }
+    try {
+      let userUpdated = await User.findByIdAndUpdate(
+        userIdentity.id,
+        userToUpdate,
+        {
+          new: true,
+        }
+      );
+      if (!userUpdated) {
+        res.status(400).json({
+          status: "Error",
+          message: "Error on updating",
+        });
+      }
+      res.status(200).json({
+        status: "Success",
+        message: "update", 
+        user: userUpdated,
+      });
+    } catch {
+      res.status(500).json({
+        status: "Error",
+        message: "Error on updating",
+        error,
+      });
+    }
+  });
+};
 
 module.exports = userCtrls;
