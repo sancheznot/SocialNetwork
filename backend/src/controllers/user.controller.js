@@ -2,6 +2,7 @@ const userCtrls = {};
 const bycrypt = require("bcrypt");
 const User = require("../models/UserModel");
 const mongoosePagination = require("mongoose-pagination");
+const fs = require("fs");
 // helper token
 const { tokenGenerator } = require("../helpers/jwt");
 
@@ -257,7 +258,7 @@ userCtrls.updateProfile = (req, res) => {
       }
       res.status(200).json({
         status: "Success",
-        message: "update", 
+        message: "update",
         user: userUpdated,
       });
     } catch {
@@ -268,6 +269,61 @@ userCtrls.updateProfile = (req, res) => {
       });
     }
   });
+};
+
+userCtrls.imageProfile = (req, res) => {
+  // get file and check if it exists
+  if (!req.file) {
+    res.status(404).json({
+      status: "Error",
+      message: "File not found, please try again, including a image",
+    });
+  }
+  // get image name
+  const images = req.file.originalname;
+  // get extension
+  const imageSplit = images.split(".");
+  const imageExt = imageSplit[1];
+  // check the image's extension
+  if (
+    imageExt != "jpg" &&
+    imageExt != "png" &&
+    imageExt != "jpeg" &&
+    imageExt != "gif"
+  ) {
+    // delete file
+    const fileToDelete = req.file.path;
+    const fileDeleted = fs.unlinkSync(fileToDelete);
+    // return message
+    return res.status(400).json({
+      status: "Error",
+      message: `Extension (.${imageExt}) not valid or file not valid, please try again`,
+      fileName: images,
+    });
+  }
+  // if the file is valid, update the image on database
+  // get the data user
+  const { id, image } = req.user;
+  const { filename } = req.file;
+  User.findByIdAndUpdate(
+    id,
+    { image: filename },
+    { new: true },
+    (err, userImageProfile) => {
+      if (err || !userImageProfile) {
+        res.status(500).json({
+          status: "Error",
+          message: "Upload error occurred",
+        });
+      }
+      res.status(200).json({
+        status: "Success",  
+        message: "update image profile success",
+        user: userImageProfile,
+        file: req.file,
+      });
+    }
+  );
 };
 
 module.exports = userCtrls;

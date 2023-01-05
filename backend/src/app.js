@@ -6,10 +6,10 @@ const cors = require("cors");
 app.set("port", process.env.PORT || 3500); // Define port of server
 
 // setting cors
-app.use(cors());
+app.use(cors());  
 
 // conver body to json
-app.use(express.json());
+app.use(express.json());   
 app.use(express.urlencoded({ extended: true }));
 
 // Create routes

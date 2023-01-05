@@ -1,5 +1,4 @@
 const { Router } = require("express");
-const { router } = require("../app");
 // -----------------------------
 const {
   userpueba,
@@ -8,9 +7,11 @@ const {
   getOneProfile,
   userList,
   updateProfile,
+  imageProfile,
 } = require("../controllers/user.controller");
 // ------------------------------
 const { auth } = require("../middleware/auth");
+const {uploads} = require("../middleware/uploadsImg")
 const routes = Router();
 
 // const username = "sancheznot"
@@ -21,4 +22,6 @@ routes.post(`/signin`, signin);
 routes.get(`/profile/:id`, auth, getOneProfile);
 routes.get(`/list/:page?`, auth, userList);
 routes.put(`/update`, auth, updateProfile);
+routes.post(`/imgupload`, [auth, uploads.single("file0")], imageProfile);
 module.exports = routes;
+ 
