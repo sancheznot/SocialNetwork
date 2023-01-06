@@ -2,6 +2,7 @@ const userCtrls = {};
 const bycrypt = require("bcrypt");
 const User = require("../models/UserModel");
 const mongoosePagination = require("mongoose-pagination");
+const path = require("path");
 const fs = require("fs");
 // helper token
 const { tokenGenerator } = require("../helpers/jwt");
@@ -317,7 +318,7 @@ userCtrls.imageProfile = (req, res) => {
         });
       }
       res.status(200).json({
-        status: "Success",  
+        status: "Success",
         message: "update image profile success",
         user: userImageProfile,
         file: req.file,
@@ -326,4 +327,22 @@ userCtrls.imageProfile = (req, res) => {
   );
 };
 
+userCtrls.showAvatar = (req, res) => {
+  // get params from url
+  const file = req.params.file;
+  // mount path of image
+  const imagePath = path.join(__dirname, "../uploads/avatars/"+file);
+  // check if exists
+  fs.stat(imagePath, (err ,exists) => {
+    if (!exists) {
+      return res.status(404).json({
+        status: "Error",
+        message: "Image not found",
+      });
+    }
+    // return the file
+
+    res.sendFile(imagePath);
+  });
+};
 module.exports = userCtrls;
