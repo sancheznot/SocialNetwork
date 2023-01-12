@@ -6,6 +6,8 @@ const path = require("path");
 const fs = require("fs");
 // helper token
 const { tokenGenerator } = require("../helpers/jwt");
+// helper follow
+const { IdServices, followThisUser } = require("../helpers/followServices");
 
 userCtrls.userpueba = (req, res) => {
   res.status(200).send({
@@ -70,7 +72,7 @@ userCtrls.signup = async (req, res) => {
           .send({ status: "Error", message: "Error while saving user" });
       }
       //   return data
-      return res.status(200).json({
+      res.status(200).json({
         status: "Success",
         message: "Register successfully",
         user: userStored,
@@ -109,7 +111,7 @@ userCtrls.signin = async (req, res) => {
         }
         // Token
         // Return User data
-        return res.status(200).json({
+        res.status(200).json({
           status: "Success",
           message: "Signin successfully",
           user: { id: user._id, name: user.name, username: user.email },
@@ -141,7 +143,7 @@ userCtrls.signin = async (req, res) => {
         // Token
         const token = tokenGenerator(user);
         // Return User data
-        return res.status(200).json({
+        res.status(200).json({
           status: "Success",
           message: "Signin successfully",
           user: { id: user._id, name: user.name, username: user.username },
@@ -157,21 +159,25 @@ userCtrls.getOneProfile = (req, res) => {
   // get data from database
   User.findById(id)
     .select({ password: 0, role: 0 })
-    .exec((err, user) => {
+    .exec(async (err, user) => {
       if (err || !user) {
-        res.status(404).json({
+        return res.status(404).json({
           status: "Error",
           message: "User not found or something went wrong",
         });
       }
-      return res.status(200).json({
+      const followInfo = await followThisUser(req.user.id, id);
+      res.status(200).json({
         status: "Success",
         user: user,
+        following: followInfo.followings,
+        followed: followInfo.follower,
       });
     });
 };
 
 userCtrls.userList = (req, res) => {
+  const userId = req.user.id;
   // controls page
   let page = 1;
   if (req.params.page) {
@@ -183,7 +189,7 @@ userCtrls.userList = (req, res) => {
   User.find()
     .select({ password: 0 })
     .sort("_id")
-    .paginate(page, itemsPerPage, (error, users, total) => {
+    .paginate(page, itemsPerPage, async (error, users, total) => {
       if (error || !users) {
         res.status(404).json({
           status: "Error",
@@ -191,7 +197,7 @@ userCtrls.userList = (req, res) => {
           error,
         });
       }
-
+      const followUserIds = await IdServices(userId);
       // return result
       res.status(200).json({
         status: "Success",
@@ -200,6 +206,8 @@ userCtrls.userList = (req, res) => {
         itemsPerPage,
         total,
         pages: Math.ceil(total / itemsPerPage),
+        user_following: followUserIds.followings,
+        user_follow_me: followUserIds.followers,
       });
     });
 };
@@ -252,7 +260,7 @@ userCtrls.updateProfile = (req, res) => {
         }
       );
       if (!userUpdated) {
-        res.status(400).json({
+        return res.status(400).json({
           status: "Error",
           message: "Error on updating",
         });
@@ -263,7 +271,7 @@ userCtrls.updateProfile = (req, res) => {
         user: userUpdated,
       });
     } catch {
-      res.status(500).json({
+      return res.status(500).json({
         status: "Error",
         message: "Error on updating",
         error,
@@ -275,7 +283,7 @@ userCtrls.updateProfile = (req, res) => {
 userCtrls.imageProfile = (req, res) => {
   // get file and check if it exists
   if (!req.file) {
-    res.status(404).json({
+    return res.status(404).json({
       status: "Error",
       message: "File not found, please try again, including a image",
     });
@@ -305,14 +313,14 @@ userCtrls.imageProfile = (req, res) => {
   // if the file is valid, update the image on database
   // get the data user
   const { id, image } = req.user;
-  const { filename } = req.file;
+  const { imageName } = req.file;
   User.findByIdAndUpdate(
     id,
-    { image: filename },
+    { image: imageName },
     { new: true },
     (err, userImageProfile) => {
       if (err || !userImageProfile) {
-        res.status(500).json({
+        return res.status(500).json({
           status: "Error",
           message: "Upload error occurred",
         });
@@ -331,9 +339,9 @@ userCtrls.showAvatar = (req, res) => {
   // get params from url
   const file = req.params.file;
   // mount path of image
-  const imagePath = path.join(__dirname, "../uploads/avatars/"+file);
+  const imagePath = path.join(__dirname, "../uploads/avatars/" + file);
   // check if exists
-  fs.stat(imagePath, (err ,exists) => {
+  fs.stat(imagePath, (err, exists) => {
     if (!exists) {
       return res.status(404).json({
         status: "Error",
