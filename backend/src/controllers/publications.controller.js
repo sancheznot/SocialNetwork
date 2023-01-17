@@ -46,7 +46,7 @@ publicCtrls.getPublication = (req, res) => {
         status: "Error",
         message: "Publication not found or not exists",
       });
-    }
+    } 
     res.status(200).json({
       status: "Success",
       message: "Publication retrieved",
