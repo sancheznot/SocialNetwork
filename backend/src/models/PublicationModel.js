@@ -1,22 +1,19 @@
-const {Schema, model} = require("mongoose")
+const { Schema, model } = require("mongoose");
 
 const PublicationsSchema = Schema({
-    user: {
-        type: Schema.ObjectId,
-        ref: "User"
-    },
-    text: {
-        type: String,
-        required: true
-    },
-    file: {
-        type: String,
+  user: {
+    type: Schema.ObjectId,
+    ref: "User",
+  },
+  text: {
+    type: String,
+    required: true,
+  },
+  file: String,
+  created_At: {
+    type: Date,
+    default: Date.now(),
+  },
+});
 
-    },
-    created_At: {
-        type: Date,
-        default: Date.now()
-    }
-})
-
-module.exports = model("Publication", PublicationsSchema)
+module.exports = model("Publication", PublicationsSchema);

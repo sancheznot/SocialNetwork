@@ -12,7 +12,7 @@ const {
 } = require("../controllers/user.controller");
 // ------------------------------
 const { auth } = require("../middleware/auth");
-const {uploads} = require("../middleware/uploadsImg")
+const { uploads } = require("../middleware/uploadsImg");
 const routes = Router();
 
 // const username = "sancheznot"
@@ -26,4 +26,3 @@ routes.put(`/update`, auth, updateProfile);
 routes.post(`/imgupload`, [auth, uploads.single("file0")], imageProfile);
 routes.get(`/avatar/:file`, auth, showAvatar);
 module.exports = routes;
-     

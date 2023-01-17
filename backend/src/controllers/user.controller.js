@@ -1,9 +1,9 @@
 const userCtrls = {};
 const bycrypt = require("bcrypt");
 const User = require("../models/UserModel");
-const mongoosePagination = require("mongoose-pagination");
 const path = require("path");
 const fs = require("fs");
+
 // helper token
 const { tokenGenerator } = require("../helpers/jwt");
 // helper follow
@@ -313,10 +313,10 @@ userCtrls.imageProfile = (req, res) => {
   // if the file is valid, update the image on database
   // get the data user
   const { id, image } = req.user;
-  const { imageName } = req.file;
+  const { filename } = req.file;
   User.findByIdAndUpdate(
     id,
-    { image: imageName },
+    { image: filename },
     { new: true },
     (err, userImageProfile) => {
       if (err || !userImageProfile) {
