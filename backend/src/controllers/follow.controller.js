@@ -1,7 +1,6 @@
 const followCtrls = {};
 const Follow = require("../models/FollowModel");
 const User = require("../models/UserModel");
-const mongoosepaginate = require("mongoose-pagination");
 // const { populate } = require("../models/FollowModel");
 
 // Import helpers
@@ -84,7 +83,7 @@ followCtrls.following = (req, res) => {
   itemsPerPage = 10;
   // find follow on database
   Follow.find({ user: userId })
-    .populate("user followed", "-password -role -__v")
+    .populate("user followed", "-password -role -__v -email")
     .paginate(page, itemsPerPage, async (error, followInStorage, total) => {
       // array user following to me
       const followUserIds = await IdServices(userId);
@@ -116,7 +115,7 @@ followCtrls.followers = (req, res) => {
   itemsPerPage = 10;
   // find follow on database
   Follow.find({ followed: userId })
-    .populate("user", "-password -role -__v")
+    .populate("user", "-password -role -__v -email")
     .paginate(page, itemsPerPage, async (error, followInStorage, total) => {
       // array user followed 
       const followUserIds = await IdServices(userId);

@@ -6,7 +6,8 @@ const {
   deletePublication,
   getOnePublicationUser,
   uploadFile,
-  media
+  media,
+  feed
 } = require("../controllers/publications.controller");
 const { auth } = require("../middleware/auth");
 const { uploads } = require("../middleware/uploadsImg");
@@ -18,6 +19,7 @@ routes.get("/get/:id", auth, getPublication);
 routes.delete("/delete/:id", auth, deletePublication);
 routes.get("/user/:id/:page?", auth, getOnePublicationUser);
 routes.post('/imgpubupload/:id', [auth, uploads.single("file0")], uploadFile);
-routes.get("/media/:file", auth , media)
+routes.get("/media/:file", media)
+routes.get("/feed", auth, feed)
 
 module.exports = routes;

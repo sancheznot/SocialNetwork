@@ -9,6 +9,7 @@ const {
   updateProfile,
   imageProfile,
   showAvatar,
+  counter,
 } = require("../controllers/user.controller");
 // ------------------------------
 const { auth } = require("../middleware/auth");
@@ -24,5 +25,6 @@ routes.get(`/profile/:id`, auth, getOneProfile);
 routes.get(`/list/:page?`, auth, userList);
 routes.put(`/update`, auth, updateProfile);
 routes.post(`/imgupload`, [auth, uploads.single("file0")], imageProfile);
-routes.get(`/avatar/:file`, auth, showAvatar);
+routes.get(`/avatar/:file`, showAvatar);
+routes.get("/counters/:id", auth, counter);
 module.exports = routes;

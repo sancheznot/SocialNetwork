@@ -3,6 +3,9 @@ const Publication = require("../models/PublicationModel");
 const path = require("path");
 const fs = require("fs");
 
+// helper follow
+const { IdServices, followThisUser } = require("../helpers/followServices");
+
 publicCtrls.public = (req, res) => {
   res.status(200).send({
     message: "Public funcionando",
@@ -46,7 +49,7 @@ publicCtrls.getPublication = (req, res) => {
         status: "Error",
         message: "Publication not found or not exists",
       });
-    } 
+    }
     res.status(200).json({
       status: "Success",
       message: "Publication retrieved",
@@ -84,7 +87,7 @@ publicCtrls.getOnePublicationUser = (req, res) => {
 
   Publication.find({ user: userID })
     .sort("-created_At")
-    .populate("user", "-password -__v -role")
+    .populate("user", "-password -__v -role -email")
     .paginate(page, itemsPerPage, (error, publication, total) => {
       if (error || !publication || !userID) {
         return res.status(404).json({
@@ -184,12 +187,45 @@ publicCtrls.media = (req, res) => {
   });
 };
 // list all publication (FEED)
-publicCtrls.feed = (req, res) => {
-  res.status(200).json({
-    status: "Success",
-    message: "Feed"
-  })
-}
+publicCtrls.feed = async (req, res) => {
+  // page
+  let page = 1;
+  if (req.params.page) {
+    page = req.params.page;
+  }
+  // set max per page
+  const itemsPerPage = 5;
+  // get user array I follow
+  try {
+    const myFollow = await IdServices(req.user.id);
 
+    Publication.find({
+      user: myFollow.followings,
+    })
+      .sort("-created_At")
+      .populate("user", "-password -__v ")
+      .paginate(page, itemsPerPage, (err, results, total) => {
+        if (err || !results) {
+          return res.status(404).json({
+            status: "Error",
+            message: "No results",
+          });
+        }
+        res.status(200).json({
+          status: "Success",
+          message: "Feed",
+          page,
+          total,
+          results,
+          pages: Math.ceil(total / itemsPerPage),
+        });
+      });
+  } catch (err) {
+    return res.status(500).json({
+      status: "Error",
+      message: "Not list user",
+    });
+  }
+};
 
 module.exports = publicCtrls;

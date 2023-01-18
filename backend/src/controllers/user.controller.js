@@ -1,6 +1,8 @@
 const userCtrls = {};
 const bycrypt = require("bcrypt");
 const User = require("../models/UserModel");
+const Publication = require("../models/PublicationModel")
+const Follow = require("../models/FollowModel")
 const path = require("path");
 const fs = require("fs");
 
@@ -187,7 +189,7 @@ userCtrls.userList = (req, res) => {
   // ask with mongoose pagination
   let itemsPerPage = 5;
   User.find()
-    .select({ password: 0 })
+    .select({ password: 0, email: 0 , __v: 0  })
     .sort("_id")
     .paginate(page, itemsPerPage, async (error, users, total) => {
       if (error || !users) {
@@ -245,11 +247,19 @@ userCtrls.updateProfile = (req, res) => {
         message: "User already exists",
       });
     }
+    if(userToUpdate.email === '' || userToUpdate.username === null){
+      delete userToUpdate.email
+    }
+    if(userToUpdate.username === '' || userToUpdate.username === null){
+      delete userToUpdate.username
+    }
 
     // if get the password encryted
     if (userToUpdate.password) {
       let pwd = await bycrypt.hash(userToUpdate.password, 10);
       userToUpdate.password = pwd;
+    }else{
+      delete userToUpdate.password;
     }
     try {
       let userUpdated = await User.findByIdAndUpdate(
@@ -353,4 +363,29 @@ userCtrls.showAvatar = (req, res) => {
     res.sendFile(imagePath);
   });
 };
+
+userCtrls.counter = async(req, res) => {
+  let userId = req.user
+  if(req.params.id){
+    userId = req.params.id
+  }
+  try{
+    const following = await Follow.count({"user": userId})
+    const followed = await Follow.count({"user": userId})
+    const publications = await Publication.count({"user": userId})
+
+    return res.status(200).json({
+      status: "Success",
+      user: userId,
+      following: following,
+      followed: followed,
+      publications
+    })
+  }catch(err) {
+    return res.status(500).json({
+      status: "Error",
+      message: "Failed to get user"
+    })
+  }
+}
 module.exports = userCtrls;
