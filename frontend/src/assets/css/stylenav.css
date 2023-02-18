@@ -1,0 +1,161 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  background: #ffffff;
+  /* overflow: hidden; */
+}
+nav {
+  position: relative;
+  /* width: 100%; */
+  min-width: 100vw;
+  max-height: 60px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-radius: 10px;
+  padding: 0 15px;
+  background-color: #d8d8d8;
+  box-shadow: 0 6.7px 5.3px rgba(0, 0, 0, 0.12),
+    0 22.3px 17.9px rgba(0, 0, 0, 0.08), 0 100px 80px rgba(0, 0, 0, 0.04);
+  /* overflow: hidden; */
+  color: #fff;
+  grid-area: nav;
+}
+.welcome{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1vw;
+  font-weight: 600;
+  color: rgba(6, 4, 4, 0.819)
+}
+nav ul {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+nav ul li {
+  list-style: none;
+}
+nav ul li a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+nav ul li a i {
+  color: rgb(0, 0, 0);
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+  transition: opacity 100ms ease;
+}
+nav ul li a:hover i {
+  opacity: 1;
+}
+nav ul li a:active i {
+  opacity: 1;
+}
+nav .tubelight {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  transform: translateX(-50%);
+  width: 45px;
+  height: 5px;
+  border-radius: 5px;
+  background: #fff;
+  transition: left 400ms ease;
+  z-index: 10;
+}
+nav .light-ray {
+  position: absolute;
+  left: -30%;
+  top: 5px;
+  width: 160%;
+  height: 80px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.3) -50%,
+    rgba(255, 255, 255, 0) 90%
+  );
+  clip-path: polygon(5% 100%, 25% 0px, 75% 0px, 95% 100%);
+  pointer-events: none;
+}
+.Rs-signIn img {
+  width: 95%;
+} 
+.dropdown{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1vw;
+  /* font-weight: 600; */
+  color: rgba(6, 4, 4, 0.819);
+  border: none;
+}
+/* Style The Dropdown Button */
+.dropbtn {
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  background-color: #d8d8d8;
+  
+}
+nav ul li .dropbtn i {
+  color: rgb(0, 0, 0);
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+  transition: opacity 100ms ease;
+  border: none;
+}
+nav ul li .dropdown button:active i {
+  opacity: 1;
+}
+nav ul li .dropdown button:hover i {
+  opacity: 1;
+}
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  background-color: none;
+
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+

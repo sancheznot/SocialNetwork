@@ -5,6 +5,7 @@ const Publication = require("../models/PublicationModel")
 const Follow = require("../models/FollowModel")
 const path = require("path");
 const fs = require("fs");
+const {paginate} = require("mongoose-pagination")
 
 // helper token
 const { tokenGenerator } = require("../helpers/jwt");
@@ -27,7 +28,7 @@ userCtrls.signup = async (req, res) => {
   if (!name || !username || !email || !password) {
     return res
       .status(400)
-      .json({ status: "Error 404", message: "Missing credentials" });
+      .json({ status: "Error 404", message: "Missing credentials", errors });
   }
   //    check match password
   if (password != confirm_password) {
@@ -55,12 +56,13 @@ userCtrls.signup = async (req, res) => {
     if (err) {
       return res
         .status(500)
-        .json({ status: "Error", message: "Error while saving user" });
+        .json({ status: "Error 500", message: "Error while saving user" });
     }
     if (user && user.length >= 1) {
       return res.status(200).send({
         status: "Success",
         message: "User already exists",
+        errors
       });
     }
     const userSave = new User({ name, username, email, password });
@@ -78,6 +80,7 @@ userCtrls.signup = async (req, res) => {
         status: "Success",
         message: "Register successfully",
         user: userStored,
+        errors
       });
     });
   });
@@ -92,7 +95,7 @@ userCtrls.signin = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         status: "Error",
-        message: "Missing credentials (email)",
+        message: "Missing credentials",
       });
     }
     User.findOne({ email: email.toLowerCase() })
@@ -112,18 +115,20 @@ userCtrls.signin = async (req, res) => {
           });
         }
         // Token
+        const token = tokenGenerator(user);
         // Return User data
         res.status(200).json({
           status: "Success",
           message: "Signin successfully",
           user: { id: user._id, name: user.name, username: user.email },
+          token
         });
       });
   } else if (!email) {
     if (!username || !password) {
       return res.status(400).json({
         status: "Error",
-        message: "Missing credentials (username)",
+        message: "Missing credentials",
       });
     }
     User.findOne({ username: username.toLowerCase() })
@@ -371,15 +376,16 @@ userCtrls.counter = async(req, res) => {
   }
   try{
     const following = await Follow.count({"user": userId})
-    const followed = await Follow.count({"user": userId})
+    const followed = await Follow.count({"followed": userId})
     const publications = await Publication.count({"user": userId})
 
     return res.status(200).json({
       status: "Success",
       user: userId,
+      Follow,
       following: following,
       followed: followed,
-      publications
+      publications,
     })
   }catch(err) {
     return res.status(500).json({
