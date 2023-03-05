@@ -21,7 +21,7 @@ export const SideBar = () => {
             <div className="general-info__container-avatar">
               <img
                 src={`${Url}/user/avatar/${image}`}
-                className="container-avatar__img"
+                className="asideavatar__img"
                 alt="avatar"
               />
             </div>
