@@ -32,7 +32,7 @@ followCtrls.saveFollower = (req, res) => {
     }
 
     res.status(200).json({
-      status: "success",
+      status: "Success",
       message: "save follow",
       followedSave,
     });
@@ -57,12 +57,12 @@ followCtrls.deleteFollower = (req, res) => {
     }
     if (followInStorage.deletedCount <= 0) {
       return res.status(200).json({
-        status: "success",
+        status: "Success",
         message: "You don't follow this user",
       });
     }
     res.status(200).json({
-      status: "success",
+      status: "Success",
       message: "You have unfollowed this user",
       followInStorage,
     });
@@ -90,7 +90,7 @@ followCtrls.following = (req, res) => {
       const followUserIds = await IdServices(userId);
 
       res.status(200).json({
-        status: "success",
+        status: "Success",
         message: "List the user following",
         followInStorage,
         total,
@@ -122,7 +122,7 @@ followCtrls.followers = (req, res) => {
       const followUserIds = await IdServices(userId);
 
       res.status(200).json({
-        status: "success",
+        status: "Success",
         message: "List the user followed",
         followInStorage,
         total,
