@@ -9,6 +9,7 @@ export const Config = () => {
   const { auth, setAuth } = useAuth();
   const { name, lastname, email, username, image, role, bio } = auth;
   const [save, setSave] = useState("notSaved");
+  const [messages, setMessages] = useState([]);
 
   const updateUser = async (e) => {
     e.preventDefault();
@@ -32,8 +33,11 @@ export const Config = () => {
       delete data.user.password;
       setAuth(data.user);
       setSave("saved");
+      console.log(data)
+      setMessages([data.message]);
     } else {
       setSave("error");
+      setMessages([data.message]);
     }
     const fileInput = document.querySelector("#file");
     if (data.status === "Success" && fileInput.files[0]) {
@@ -53,11 +57,13 @@ export const Config = () => {
         // update avatar in frontend
         // delete data not needed
         delete uploadData.user.password;
-        console.log(uploadData);
         setAuth(uploadData.user);
         setSave("saved");
+        setMessages([uploadData.message]);
       }else{
+        console.log(uploadData.message);
         setSave("error");
+        setMessages([uploadData.message]);
       }
     }
   };
@@ -72,13 +78,12 @@ export const Config = () => {
           <form className="profileForm" onSubmit={updateUser}>
           {save === "saved" ? (
             <div className="alert alert-success" role="alert">  
-              <strong>Save</strong> 
+              <strong>Save | {messages}</strong> 
             </div>
           ) : null}
           {save === "error" ? (
             <div className="alert alert-danger" role="alert">
-              <strong>Oh snap!</strong> Change a few things up and try
-              submitting again.
+              <strong>Oh snap!</strong> {messages}
             </div>
           ) : null}
             <div className="form__group">

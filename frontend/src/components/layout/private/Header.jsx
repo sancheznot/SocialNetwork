@@ -20,7 +20,7 @@ export const Header = () => {
       </ul>
       <ul>
         <li>
-          <NavLink to="/">
+          <NavLink to="/social/people">
             <i className="lni lni-circle-plus"></i>
           </NavLink>
         </li>
