@@ -1,5 +1,6 @@
 import React from "react";
-import imgProfile from "../../../assets/img/user.png";
+import { Link } from "react-router-dom";
+// import imgProfile from "../../../assets/img/user.png";
 import { Global } from "../../../helpers/Global";
 import useAuth from "../../../hooks/useAuth";
 
@@ -7,7 +8,7 @@ const { Url } = Global;
 
 export const SideBar = () => {
   const { auth, counters } = useAuth();
-  const { name, username, image } = auth;
+  const { name, username, image, _id } = auth;
   const { following, followed, publications } = counters;
   return (
     <aside className="layout__aside">
@@ -27,32 +28,32 @@ export const SideBar = () => {
             </div>
 
             <div className="general-info__container-names">
-              <a href="#" className="container-names__name">
+              <Link  to="/social/config" className="container-names__name">
                 {name}
-              </a>
+              </Link>
               <p className="container-names__nickname">@{username}</p>
             </div>
           </div>
 
           <div className="profile-info__stats">
             <div className="stats__following">
-              <a href="#" className="following__link">
+              <Link to={"following/" + _id} className="following__link">
                 <span className="following__title">Following</span>
                 <span className="following__number">{following}</span>
-              </a>
+              </Link>
             </div>
             <div className="stats__following">
-              <a href="#" className="following__link">
+              <Link to={"followers/" + _id }className="following__link">
                 <span className="following__title">Followers</span>
                 <span className="following__number">{followed}</span>
-              </a>
+              </Link>
             </div>
 
             <div className="stats__following">
-              <a href="#" className="following__link">
+              <Link href="#" className="following__link">
                 <span className="following__title">Post</span>
                 <span className="following__number">{publications}</span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
