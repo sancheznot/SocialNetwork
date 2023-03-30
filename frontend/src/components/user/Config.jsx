@@ -33,7 +33,6 @@ export const Config = () => {
       delete data.user.password;
       setAuth(data.user);
       setSave("saved");
-      console.log(data)
       setMessages([data.message]);
     } else {
       setSave("error");
