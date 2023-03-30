@@ -18,7 +18,6 @@ export const SignInUp = () => {
   const saveUser = async (e) => {
     // Prevent the default behavior of the form
     e.preventDefault();
-    console.log(form);
     let newUser = form;
     const request = await fetch(`${Url}/user/signup`, {
       method: "POST",

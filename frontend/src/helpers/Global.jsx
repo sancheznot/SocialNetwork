@@ -1,4 +1,4 @@
 export const Global = {};
 
-Global.Url =  "http://localhost:3500/api";
+Global.Url =  "http://localhost:3600/api";
 
