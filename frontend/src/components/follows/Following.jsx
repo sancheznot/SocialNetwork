@@ -4,11 +4,15 @@ import { Global } from "../../helpers/Global";
 import { UserList } from "../user/UserList";
 import useAuth from "../../hooks/useAuth";
 import { useParams } from "react-router-dom";
+import { getProfile } from "../../helpers/GetProfile";
+
 
 const { Url } = Global;
 export const Following = () => {
   useEffect(() => {
     getUser(1);
+    getProfile(userId, setProfile)
+    ;
   }, []);
 
   const params = useParams();
@@ -17,17 +21,22 @@ export const Following = () => {
   const [more, setMore] = useState(true);
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [profile, setProfile] = useState({});
+  const token = localStorage.getItem("token");
   const userId = params.userId;
+
   const getUser = async (nextPage = 1) => {
     setLoading(true);
-    const request = await fetch(`${Url}/follow/following/${userId}/${nextPage}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
-      },
-    });
+    const request = await fetch(
+      `${Url}/follow/following/${userId}/${nextPage}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      }
+    );
     const data = await request.json();
     let cleanUsers = [];
     data.followInStorage.forEach((follow) => {
@@ -49,11 +58,11 @@ export const Following = () => {
       setMore(false);
     }
   };
-
+  
   return (
     <>
       <header className="content__header">
-        <h1 className="content__title">People</h1>
+        <h1 className="content__title">{profile.name} this are the users that you follow </h1>
       </header>
       <UserList
         users={users}

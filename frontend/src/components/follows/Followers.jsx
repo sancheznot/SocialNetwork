@@ -5,32 +5,40 @@ import { UserList } from "../user/UserList";
 import useAuth from "../../hooks/useAuth";
 import { useParams } from "react-router-dom";
 const { Url } = Global;
+import { getProfile } from "../../helpers/GetProfile";
+
 export const Followers = () => {
   useEffect(() => {
     getUser(1);
+    getProfile(userId, setProfile);
   }, []);
 
-  const params = useParams()
+  const params = useParams();
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [more, setMore] = useState(true);
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState({});
+  const token = localStorage.getItem("token");
 
   const userId = params.userId;
   const getUser = async (nextPage = 1) => {
     setLoading(true);
-    const request = await fetch(`${Url}/follow/follower/${userId}/${nextPage}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
-      },
-    });
+    const request = await fetch(
+      `${Url}/follow/follower/${userId}/${nextPage}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      }
+    );
     const data = await request.json();
-    let cleanUsers = []
-    data.followInStorage.forEach(follow =>{ 
-      cleanUsers = [...cleanUsers, follow.user]
+    let cleanUsers = [];
+    data.followInStorage.forEach((follow) => {
+      cleanUsers = [...cleanUsers, follow.user];
     });
     data.users = cleanUsers;
     if (data.users && data.status === "Success") {
@@ -52,7 +60,9 @@ export const Followers = () => {
   return (
     <>
       <header className="content__header">
-        <h1 className="content__title">People</h1>
+        <h1 className="content__title">
+          {profile.name} this are the users that follow you
+        </h1>
       </header>
       <UserList
         users={users}
