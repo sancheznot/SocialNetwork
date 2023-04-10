@@ -9,6 +9,7 @@ import { Feed } from "../components/publications/Feed";
 import { Config } from "../components/user/Config";
 import { LogOut } from "../components/user/LogOut";
 import { People } from "../components/user/People";
+import { Profile } from "../components/user/Profile";
 import { SignInUp } from "../components/user/SignInUp";
 import { AuthProvider } from "../context/AuthProvider";
 
@@ -30,6 +31,8 @@ export const Routing = () => {
             <Route path="config" element={<Config/>} />
             <Route path="following/:userId" element={<Following/>} />
             <Route path="followers/:userId" element={<Followers/>} />
+            <Route path="profile/:userId" element={<Profile/>} />
+
 
 
 

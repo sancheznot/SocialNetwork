@@ -1,7 +1,13 @@
 import React from "react";
 import { Navigate, NavLink, useNavigate } from "react-router-dom";
+import { Global } from "../../../helpers/Global";
+import { useAuth } from "../../../hooks/useAuth";
 
 export const Header = () => {
+  const {Url} = Global
+  const { auth } = useAuth();
+  const {  image, _id } = auth;
+console.log(_id)
   return (
     <nav>
       <ul>
@@ -13,8 +19,14 @@ export const Header = () => {
       </ul>
       <ul>
         <li>
-          <NavLink to="/" >
-            <i className="lni lni-bookmark"></i>
+          <NavLink to={`/social/profile/+${_id}`} >
+          <div className="avatar-To-Profile">
+              <img
+                src={`${Url}/user/avatar/${image}`}
+                className="imgToProfile"
+                alt="avatar"
+              />
+            </div>
           </NavLink>
         </li>
       </ul>
