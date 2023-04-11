@@ -7,7 +7,6 @@ export const Header = () => {
   const {Url} = Global
   const { auth } = useAuth();
   const {  image, _id } = auth;
-console.log(_id)
   return (
     <nav>
       <ul>
@@ -19,7 +18,7 @@ console.log(_id)
       </ul>
       <ul>
         <li>
-          <NavLink to={`/social/profile/+${_id}`} >
+          <NavLink to={`/social/profile/${_id}`} >
           <div className="avatar-To-Profile">
               <img
                 src={`${Url}/user/avatar/${image}`}
