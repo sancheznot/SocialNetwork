@@ -1,48 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import imgProfile from "../../assets/img/user.png";
+import { useParams } from "react-router-dom";
+import { getProfile } from "../../helpers/GetProfile";
+import { Global } from "../../helpers/Global";
+import useAuth from "../../hooks/useAuth";
 
+const { Url } = Global;
 export const Profile = () => {
+  useEffect(() => {
+    getProfile(params.userId, setUser);
+  }, []); 
+  const [user, setUser] = useState({});
+  const params = useParams();
+
+  // const userId = params.userId;
+
   return (
     <>
-      <aside class="layout__aside">
-        <div class="aside__container">
-          <div class="aside__profile-info">
-            <div class="profile-info__general-info">
-              <div class="general-info__container-avatar">
+      <aside className="layout__aside">
+        <div className="aside__container">
+          <div className="aside__profile-info">
+            <div className="profile-info__general-info">
+              <div className="general-info__container-avatar">
                 <img
-                  src="assets/img/user.png"
-                  class="container-avatar__img"
+                  src={`${Url}/user/avatar/${user.image}`}
+                  className="container-avatar__img"
                   alt="Foto de perfil"
                 />
               </div>
 
-              <div class="general-info__container-names">
-                <a href="#" class="container-names__name">
-                  Victor Robles
+              <div className="general-info__container-names">
+                <a href="#" className="container-names__name">
+                  {user.name}
                 </a>
-                <p class="container-names__nickname">VictorWeb</p>
+                <p className="container-names__nickname">{user.username}</p>
+                <p className="container-names__nickname">{user.bio}</p>
                 <button className="content__button">Follow</button>
               </div>
             </div>
 
-            <div class="profile-info__stats">
-              <div class="stats__following">
-                <a href="#" class="following__link">
-                  <span class="following__title">Siguiendo</span>
-                  <span class="following__number">10</span>
+            <div className="profile-info__stats">
+              <div className="stats__following">
+                <a href="#" className="following__link">
+                  <span className="following__title">Following</span>
+                  <span className="following__number">{}</span>
                 </a>
               </div>
-              <div class="stats__following">
-                <a href="#" class="following__link">
-                  <span class="following__title">Seguidores</span>
-                  <span class="following__number">13</span>
+              <div className="stats__following">
+                <a href="#" className="following__link">
+                  <span className="following__title">Followers</span>
+                  <span className="following__number">{}</span>
                 </a>
               </div>
 
-              <div class="stats__following">
-                <a href="#" class="following__link">
-                  <span class="following__title">Publicaciones</span>
-                  <span class="following__number">17</span>
+              <div className="stats__following">
+                <a href="#" className="following__link">
+                  <span className="following__title">Post</span>
+                  <span className="following__number"></span>
                 </a>
               </div>
             </div>
