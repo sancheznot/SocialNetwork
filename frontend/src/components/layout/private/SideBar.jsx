@@ -6,6 +6,7 @@ import useAuth from "../../../hooks/useAuth";
 import { useForm } from "../../../hooks/useForm";
 import { useState } from "react";
 
+
 const { Url } = Global;
 
 export const SideBar = () => {
@@ -113,7 +114,7 @@ export const SideBar = () => {
             </div>
 
             <div className="stats__following">
-              <Link href="#" className="following__link">
+              <Link to={"profile/" + _id} className="following__link">
                 <span className="following__title">Post</span>
                 <span className="following__number">{publications}</span>
               </Link>
