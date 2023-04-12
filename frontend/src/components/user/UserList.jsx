@@ -36,7 +36,6 @@ export const UserList = ({
           console.log("esto es el id");
         } else {
           setFollowing([...following, id]);
-          console.log("esto es el id con el otro array");
         }
       }
     }
