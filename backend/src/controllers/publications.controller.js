@@ -83,7 +83,7 @@ publicCtrls.getOnePublicationUser = (req, res) => {
   // page
   let page = 1;
   if (req.params.page) page = req.params.page;
-  const itemsPerPage = 5;
+  const itemsPerPage = 999999;
 
   Publication.find({ user: userID })
     .sort("-created_At")
@@ -158,9 +158,9 @@ publicCtrls.uploadFile = (req, res) => {
           message: "Upload error occurred",
         });
       }
-      res.status(200).json({
+      res.status(200).json({ 
         status: "Success",
-        message: "update image publication success",
+        message: "Publication Posted with image",
         publication: publicationUpdate,
         file: req.file,
       });
