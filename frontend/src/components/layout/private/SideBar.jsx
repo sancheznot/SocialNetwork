@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-// import imgProfile from "../../../assets/img/user.png";
 import { Global } from "../../../helpers/Global";
 import useAuth from "../../../hooks/useAuth";
 import { useForm } from "../../../hooks/useForm";
 import { useState } from "react";
-
 
 const { Url } = Global;
 
@@ -38,16 +36,21 @@ export const SideBar = () => {
       setStored("stored");
       setMessages([data.message]);
       const myform = document.getElementById("post-form");
-      myform.reset();
+      const myFile = document.getElementById("file");
+      console.log(myFile.files.length)
+      if (myFile.files.length <= 0) {
+        myform.reset();
+      }
     } else {
       setStored("Error");
       setMessages([data.message]);
     }
     // upload the image
-    const fileinput = document.getElementById("file");
-    if (data.status === "Success" && fileinput.files[0]) {
+    const fileInput = document.querySelector("#file");
+    if (data.status === "Success" && fileInput.files[0]) {
+      console.log(data.publication._id);
       const formData = new FormData();
-      formData.append("file0", fileinput.files[0]);
+      formData.append("file0", fileInput.files[0]);
       const request = await fetch(
         `${Url}/public/imgpubupload/${data.publication._id}`,
         {
@@ -61,10 +64,13 @@ export const SideBar = () => {
       const uploadData = await request.json();
       if (uploadData.status === "Success") {
         setStored("stored");
+        setMessages([uploadData.message]);
       } else {
         setStored("Error");
+        setMessages([uploadData.message]);
       }
       if (data.status === "Success" || uploadData.status === "Success") {
+        console.log(uploadData);
         const myform = document.getElementById("post-form");
         myform.reset();
       }
@@ -91,8 +97,7 @@ export const SideBar = () => {
             <div className="general-info__container-names">
               <Link
                 to={`/social/profile/${_id}`}
-                className="container-names__name"
-              >
+                className="container-names__name">
                 {name}
               </Link>
               <p className="container-names__nickname">@{username}</p>
@@ -136,8 +141,7 @@ export const SideBar = () => {
           <form
             className="container-form__form-post"
             onSubmit={savePost}
-            id="post-form"
-          >
+            id="post-form">
             <div className="form-post__inputs">
               <label htmlFor="text" className="form-post__label">
                 ¿Que estas pesando hoy?

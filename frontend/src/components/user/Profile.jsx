@@ -1,34 +1,41 @@
 import React, { useEffect, useState } from "react";
-import imgProfile from "../../assets/img/user.png";
 import { useParams } from "react-router-dom";
 import { getProfile } from "../../helpers/GetProfile";
 import { Global } from "../../helpers/Global";
 import useAuth from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 
+import { Publications } from "../publications/Publications";
+
+
 const { Url } = Global;
 export const Profile = () => {
-  useEffect(() => {
-    DataUser();
-    getCounters();
-  }, []);
-  const params = useParams();
-  useEffect(() => {
-    DataUser();
-    getCounters();
-  }, [params]);
-  const DataUser = async () => {
-    let dataUser = await getProfile(userId, setUser);
-    console.log(dataUser);
-    if (dataUser.following && dataUser.following._id) setIFollow(true);
-  };
   const [user, setUser] = useState({});
   const [counters, setCounters] = useState({});
   const [iFollow, setIFollow] = useState(false);
+  const params = useParams();
   const userId = params.userId;
   const token = localStorage.getItem("token");
+  const [post, setPost] = useState([]);
   const { auth } = useAuth();
   const { _id } = auth;
+
+  useEffect(() => {
+    DataUser();
+    getCounters();
+    getPublic();
+  }, []);
+  useEffect(() => {
+    DataUser();
+    getCounters();
+    getPublic();
+  }, [params]);
+
+  const DataUser = async () => {
+    let dataUser = await getProfile(userId, setUser);
+    if (dataUser.following && dataUser.following._id) setIFollow(true);
+  };
+
 
   const getCounters = async () => {
     const request = await fetch(`${Url}/user/counters/${userId}`, {
@@ -56,9 +63,7 @@ export const Profile = () => {
     });
     const data = await request.json();
     if (data.status === "Success") {
-      
-          setIFollow(true);
-       
+      setIFollow(true);
     }
   };
   const unfollowUser = async (id) => {
@@ -74,6 +79,37 @@ export const Profile = () => {
       setIFollow(false);
     }
   };
+
+ const getPublic = async (nextpage = 1) => {
+    const request = await fetch(`${Url}/public/user/${userId}/${nextpage}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    const data = await request.json();
+    if (data.status === "Success") {
+      if (data.publication.length <= 0) {
+        setPost([]);
+      } else {
+        setPost(data.publication);
+      }
+    }
+  };
+  // const deletePost = async (id) => {
+  //   const request = await fetch(`${Url}/public/delete/${id}`, {
+  //     method: "DELETE",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: localStorage.getItem("token"),
+  //     },
+  //   });
+  //   const data = await request.json();
+  //   if (data.status === "Success") {
+  //     getPublic();
+  //   }
+  // };
   return (
     <>
       <aside className="layout__aside">
@@ -143,270 +179,11 @@ export const Profile = () => {
       </aside>
 
       <div className="content__posts_profile">
-        <div className="posts__post_profile">
-          <div className="post__container">
-            <div className="post__image-user">
-              <a href="#" className="post__image-link">
-                <img
-                  src={imgProfile}
-                  className="post__user-image"
-                  alt="Foto de perfil"
-                />
-              </a>
-            </div>
-
-            <div className="post__body">
-              <div className="post__user-info">
-                <a href="#" className="user-info__name">
-                  Adrian
-                </a>
-                <span className="user-info__divider"> | </span>
-                <a href="#" className="user-info__create-date">
-                  Hace 1 hora
-                </a>
-              </div>
-
-              <h4 className="post__content">Hola, buenos dias.</h4>
-            </div>
-          </div>
-
-          <div className="post__buttons">
-            <a href="#" className="post__button">
-              <i className="fa-solid fa-trash-can"></i>
-            </a>
-          </div>
-        </div>
-        <div className="posts__post_profile">
-          <div className="post__container">
-            <div className="post__image-user">
-              <a href="#" className="post__image-link">
-                <img
-                  src={imgProfile}
-                  className="post__user-image"
-                  alt="Foto de perfil"
-                />
-              </a>
-            </div>
-
-            <div className="post__body">
-              <div className="post__user-info">
-                <a href="#" className="user-info__name">
-                  Victor Robles
-                </a>
-                <span className="user-info__divider"> | </span>
-                <a href="#" className="user-info__create-date">
-                  Hace 1 hora
-                </a>
-              </div>
-
-              <h4 className="post__content">Hola, buenos dias.</h4>
-            </div>
-          </div>
-
-          <div className="post__buttons">
-            <a href="#" className="post__button">
-              <i className="fa-solid fa-trash-can"></i>
-            </a>
-          </div>
-        </div>{" "}
-        <div className="posts__post_profile">
-          <div className="post__container">
-            <div className="post__image-user">
-              <a href="#" className="post__image-link">
-                <img
-                  src={imgProfile}
-                  className="post__user-image"
-                  alt="Foto de perfil"
-                />
-              </a>
-            </div>
-
-            <div className="post__body">
-              <div className="post__user-info">
-                <a href="#" className="user-info__name">
-                  Victor Robles
-                </a>
-                <span className="user-info__divider"> | </span>
-                <a href="#" className="user-info__create-date">
-                  Hace 1 hora
-                </a>
-              </div>
-
-              <h4 className="post__content">Hola, buenos dias.</h4>
-            </div>
-          </div>
-
-          <div className="post__buttons">
-            <a href="#" className="post__button">
-              <i className="fa-solid fa-trash-can"></i>
-            </a>
-          </div>
-        </div>{" "}
-        <div className="posts__post_profile">
-          <div className="post__container">
-            <div className="post__image-user">
-              <a href="#" className="post__image-link">
-                <img
-                  src={imgProfile}
-                  className="post__user-image"
-                  alt="Foto de perfil"
-                />
-              </a>
-            </div>
-
-            <div className="post__body">
-              <div className="post__user-info">
-                <a href="#" className="user-info__name">
-                  Victor Robles
-                </a>
-                <span className="user-info__divider"> | </span>
-                <a href="#" className="user-info__create-date">
-                  Hace 1 hora
-                </a>
-              </div>
-
-              <h4 className="post__content">Hola, buenos dias.</h4>
-            </div>
-          </div>
-
-          <div className="post__buttons">
-            <a href="#" className="post__button">
-              <i className="fa-solid fa-trash-can"></i>
-            </a>
-          </div>
-        </div>{" "}
-        <div className="posts__post_profile">
-          <div className="post__container">
-            <div className="post__image-user">
-              <a href="#" className="post__image-link">
-                <img
-                  src={imgProfile}
-                  className="post__user-image"
-                  alt="Foto de perfil"
-                />
-              </a>
-            </div>
-
-            <div className="post__body">
-              <div className="post__user-info">
-                <a href="#" className="user-info__name">
-                  Victor Robles
-                </a>
-                <span className="user-info__divider"> | </span>
-                <a href="#" className="user-info__create-date">
-                  Hace 1 hora
-                </a>
-              </div>
-
-              <h4 className="post__content">Hola, buenos dias.</h4>
-            </div>
-          </div>
-
-          <div className="post__buttons">
-            <a href="#" className="post__button">
-              <i className="fa-solid fa-trash-can"></i>
-            </a>
-          </div>
-        </div>
-        <div className="posts__post_profile">
-          <div className="post__container">
-            <div className="post__image-user">
-              <a href="#" className="post__image-link">
-                <img
-                  src={imgProfile}
-                  className="post__user-image"
-                  alt="Foto de perfil"
-                />
-              </a>
-            </div>
-
-            <div className="post__body">
-              <div className="post__user-info">
-                <a href="#" className="user-info__name">
-                  Victor Robles
-                </a>
-                <span className="user-info__divider"> | </span>
-                <a href="#" className="user-info__create-date">
-                  Hace 1 hora
-                </a>
-              </div>
-
-              <h4 className="post__content">Hola, buenos dias.</h4>
-            </div>
-          </div>
-
-          <div className="post__buttons">
-            <a href="#" className="post__button">
-              <i className="fa-solid fa-trash-can"></i>
-            </a>
-          </div>
-        </div>
-        <div className="posts__post_profile">
-          <div className="post__container">
-            <div className="post__image-user">
-              <a href="#" className="post__image-link">
-                <img
-                  src={imgProfile}
-                  className="post__user-image"
-                  alt="Foto de perfil"
-                />
-              </a>
-            </div>
-
-            <div className="post__body">
-              <div className="post__user-info">
-                <a href="#" className="user-info__name">
-                  Victor Robles
-                </a>
-                <span className="user-info__divider"> | </span>
-                <a href="#" className="user-info__create-date">
-                  Hace 1 hora
-                </a>
-              </div>
-
-              <h4 className="post__content">Hola, buenos dias.</h4>
-            </div>
-          </div>
-
-          <div className="post__buttons">
-            <a href="#" className="post__button">
-              <i className="fa-solid fa-trash-can"></i>
-            </a>
-          </div>
-        </div>
-        <div className="posts__post_profile">
-          <div className="post__container">
-            <div className="post__image-user">
-              <a href="#" className="post__image-link">
-                <img
-                  src={imgProfile}
-                  className="post__user-image"
-                  alt="Foto de perfil"
-                />
-              </a>
-            </div>
-
-            <div className="post__body">
-              <div className="post__user-info">
-                <a href="#" className="user-info__name">
-                  Victor Robles
-                </a>
-                <span className="user-info__divider"> | </span>
-                <a href="#" className="user-info__create-date">
-                  Hace 1 hora
-                </a>
-              </div>
-
-              <h4 className="post__content">Hola, buenos dias.</h4>
-            </div>
-          </div>
-
-          <div className="post__buttons">
-            <a href="#" className="post__button">
-              <i className="fa-solid fa-trash-can"></i>
-            </a>
-          </div>
-        </div>
+          <Publications
+          post={post}
+          setPost={setPost}
+          getPublic={getPublic}
+          />
       </div>
     </>
   );
