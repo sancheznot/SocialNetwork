@@ -37,7 +37,6 @@ export const SideBar = () => {
       setMessages([data.message]);
       const myform = document.getElementById("post-form");
       const myFile = document.getElementById("file");
-      console.log(myFile.files.length)
       if (myFile.files.length <= 0) {
         myform.reset();
       }
@@ -48,7 +47,6 @@ export const SideBar = () => {
     // upload the image
     const fileInput = document.querySelector("#file");
     if (data.status === "Success" && fileInput.files[0]) {
-      console.log(data.publication._id);
       const formData = new FormData();
       formData.append("file0", fileInput.files[0]);
       const request = await fetch(
@@ -70,7 +68,6 @@ export const SideBar = () => {
         setMessages([uploadData.message]);
       }
       if (data.status === "Success" || uploadData.status === "Success") {
-        console.log(uploadData);
         const myform = document.getElementById("post-form");
         myform.reset();
       }

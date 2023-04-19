@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import moment from "moment";
 import { Global } from "../../helpers/Global";
+import ReactTimeAgo from "react-time-ago";
 
 const { Url } = Global;
 
-export const Publications = ({post, setPost, getPublic}) => {
+export const Publications = ({ post, setPost, getPublic, date, datas }) => {
   const { auth } = useAuth();
 
   const deletePost = async (id) => {
@@ -26,43 +27,40 @@ export const Publications = ({post, setPost, getPublic}) => {
     <>
       {post.map((getpost) => {
         return (
-          <div className="posts__post_profile" key={getpost._id}>
-            <div className="post__container">
-              <div className="post__image-user">
+          <div key={getpost._id}>
+            <div className="post__image-user">
+              <Link
+                to={`/social/profile/${getpost.user._id}`}
+                className="post__image-link">
+                <img
+                  src={`${Url}/user/avatar/${getpost.user.image}`}
+                  className="post__user-image"
+                  alt="Foto de perfil"
+                />
+              </Link>
+            </div>
+
+            <div className="post__body">
+              <div className="post__user-info">
                 <Link
                   to={`/social/profile/${getpost.user._id}`}
-                  className="post__image-link">
-                  <img
-                    src={`${Url}/user/avatar/${getpost.user.image}`}
-                    className="post__user-image"
-                    alt="Foto de perfil"
-                  />
+                  className="user-info__name">
+                  {getpost.user.name}
                 </Link>
+                <span className="user-info__divider"> | </span>
+                <a href="#" className="user-info__create-date">
+                  <ReactTimeAgo date={getpost.created_At} locale="en-US" timeStyle="twitter" />
+                </a>
               </div>
 
-              <div className="post__body">
-                <div className="post__user-info">
-                  <Link
-                    to={`/social/profile/${getpost.user._id}`}
-                    className="user-info__name">
-                    {getpost.user.name}
-                  </Link>
-                  <span className="user-info__divider"> | </span>
-                  <a href="#" className="user-info__create-date">
-                    {moment(getpost.created_At)
-                      .subtract(1, "seconts")
-                      .fromNow()}
-                  </a>
-                </div>
-
-                <h4 className="post__content">{getpost.text}</h4>
-                <div className="post__image">
-                  {getpost.file && (
-                    <img src={`${Url}/public/media/${getpost.file}`} />
-                  )}
-                </div>
+              <h4 className="post__content">{getpost.text}</h4>
+              <div className="post__image">
+                {getpost.file && (
+                  <img src={`${Url}/public/media/${getpost.file}`} />
+                )}
               </div>
             </div>
+
             {auth._id === getpost.user._id && (
               <div className="post__buttons">
                 <button
