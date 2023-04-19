@@ -72,7 +72,9 @@ publicCtrls.deletePublication = (req, res) => {
       status: "Success",
       message: "Publication deleted",
       publication: publicID,
+      
     });
+    
   });
 };
 
@@ -109,6 +111,7 @@ publicCtrls.getOnePublicationUser = (req, res) => {
         pages: Math.ceil(total / itemsPerPage),
         publication: publication,
       });
+      
     });
 };
 // upload file
@@ -194,7 +197,7 @@ publicCtrls.feed = async (req, res) => {
     page = req.params.page;
   }
   // set max per page
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
   // get user array I follow
   try {
     const myFollow = await IdServices(req.user.id);
@@ -204,11 +207,11 @@ publicCtrls.feed = async (req, res) => {
     })
       .sort("-created_At")
       .populate("user", "-password -__v ")
-      .paginate(page, itemsPerPage, (err, results, total) => {
-        if (err || !results) {
+      .paginate(page, itemsPerPage, (err, publication, total) => {
+        if (err || !publication) {
           return res.status(404).json({
             status: "Error",
-            message: "No results",
+            message: "No publication",
           });
         }
         res.status(200).json({
@@ -216,7 +219,7 @@ publicCtrls.feed = async (req, res) => {
           message: "Feed",
           page,
           total,
-          results,
+          publication,
           pages: Math.ceil(total / itemsPerPage),
         });
       });

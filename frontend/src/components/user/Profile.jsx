@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 
 import { Publications } from "../publications/Publications";
 
-
 const { Url } = Global;
 export const Profile = () => {
   const [user, setUser] = useState({});
@@ -19,6 +18,7 @@ export const Profile = () => {
   const [post, setPost] = useState([]);
   const { auth } = useAuth();
   const { _id } = auth;
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     DataUser();
@@ -35,7 +35,6 @@ export const Profile = () => {
     let dataUser = await getProfile(userId, setUser);
     if (dataUser.following && dataUser.following._id) setIFollow(true);
   };
-
 
   const getCounters = async () => {
     const request = await fetch(`${Url}/user/counters/${userId}`, {
@@ -80,7 +79,7 @@ export const Profile = () => {
     }
   };
 
- const getPublic = async (nextpage = 1) => {
+  const getPublic = async (nextpage = 1) => {
     const request = await fetch(`${Url}/public/user/${userId}/${nextpage}`, {
       method: "GET",
       headers: {
@@ -90,26 +89,15 @@ export const Profile = () => {
     });
     const data = await request.json();
     if (data.status === "Success") {
-      if (data.publication.length <= 0) {
+      if (data.message === "You don't have any publication") {
         setPost([]);
+        setMessage(data.message);
       } else {
         setPost(data.publication);
+        setMessage("");
       }
     }
   };
-  // const deletePost = async (id) => {
-  //   const request = await fetch(`${Url}/public/delete/${id}`, {
-  //     method: "DELETE",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: localStorage.getItem("token"),
-  //     },
-  //   });
-  //   const data = await request.json();
-  //   if (data.status === "Success") {
-  //     getPublic();
-  //   }
-  // };
   return (
     <>
       <aside className="layout__aside">
@@ -177,14 +165,24 @@ export const Profile = () => {
           </div>
         </div>
       </aside>
-
-      <div className="content__posts_profile">
-          <Publications
-          post={post}
-          setPost={setPost}
-          getPublic={getPublic}
-          />
-      </div>
+      {message === "You don't have any publication" ? (
+        <h2 className="notMessage_profile">{message}</h2>
+      ) : (
+        post.length >= 1 && (
+          <div className="content__posts_profile">
+            <div className="post__container">
+              <div className="posts__post_profile">
+                <Publications
+                  post={post}
+                  setPost={setPost}
+                  getPublic={getPublic}
+                  message={message}
+                />
+              </div>
+            </div>
+          </div>
+        )
+      )}
     </>
   );
 };

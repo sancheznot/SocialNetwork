@@ -129,10 +129,25 @@ body {
   border: 1px solid var(--color-border-post);
   padding: 1.5rem;
 }
+.posts__post__feed {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--color-border-post);
+  padding: 1.5rem;
+}
 
 .post__container {
   display: flex;
   flex-direction: row;
+}
+.post__container__feed {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
 }
 
 .post__image-user {
@@ -548,6 +563,14 @@ button{
   margin-top: 2rem;
   flex-wrap: wrap;
 }
+.content__posts_feed {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
 .posts__post_profile {
   width: 32%;
   margin-right: 10px;
@@ -560,4 +583,27 @@ button{
   padding: 1.5rem;
   /* flex-grow: 1; */
   flex: 1 1 auto;
+}
+.posts__post_feed {
+  width: 100% ;
+  margin-right: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--color-border-post);
+  padding: 1.5rem;
+  /* flex-grow: 1; */
+  /* flex: 1 1 auto; */
+}
+
+.notMessage_profile{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
 }

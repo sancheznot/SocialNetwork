@@ -20,6 +20,6 @@ routes.delete("/delete/:id", auth, deletePublication);
 routes.get("/user/:id/:page?", auth, getOnePublicationUser);
 routes.post('/imgpubupload/:id', [auth, uploads.single("file0")], uploadFile);
 routes.get("/media/:file", media)
-routes.get("/feed", auth, feed)
+routes.get("/feed/:page", auth, feed)
 
 module.exports = routes;

@@ -12,7 +12,7 @@ const PublicationsSchema = Schema({
   file: String,
   created_At: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 

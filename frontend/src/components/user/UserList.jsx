@@ -3,6 +3,7 @@ import useAuth from "../../hooks/useAuth";
 import { Global } from "../../helpers/Global";
 import { Link } from "react-router-dom";
 const { Url } = Global;
+import ReactTimeAgo from "react-time-ago";
 
 export const UserList = ({
   users,
@@ -74,7 +75,9 @@ export const UserList = ({
             <article className="posts__post" key={_id}>
               <div className="post__container">
                 <div className="post__image-user">
-                  <Link to={`/social/profile/${_id}`} className="post__image-link">
+                  <Link
+                    to={`/social/profile/${_id}`}
+                    className="post__image-link">
                     <img
                       src={`${Url}/user/avatar/${image}`}
                       className="post__user-image"
@@ -85,13 +88,17 @@ export const UserList = ({
 
                 <div className="post__body">
                   <div className="post__user-info">
-                    <Link to={`/social/profile/${_id}`} className="user-info__name">
+                    <Link
+                      to={`/social/profile/${_id}`}
+                      className="user-info__name">
                       {name}
                       {lastname}
                     </Link>
                     <span className="user-info__divider"> | </span>
-                    <Link to={`/social/profile/${_id}`} className="user-info__create-date">
-                      {create_at}
+                    <Link
+                      to={`/social/profile/${_id}`}
+                      className="user-info__create-date">
+                      <ReactTimeAgo date={create_at} locale="en-US" />
                     </Link>
                   </div>
 
@@ -104,8 +111,7 @@ export const UserList = ({
                   {!following.includes(_id) && (
                     <button
                       className="post__buttonFollow"
-                      onClick={() => followUser(_id)}
-                    >
+                      onClick={() => followUser(_id)}>
                       Follow
                     </button>
                   )}
@@ -114,8 +120,7 @@ export const UserList = ({
                       className="post__buttonFollow"
                       onClick={() => {
                         unfollowUser(_id);
-                      }}
-                    >
+                      }}>
                       Unfollow
                     </button>
                   )}
