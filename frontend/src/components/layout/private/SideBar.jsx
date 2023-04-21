@@ -146,6 +146,7 @@ export const SideBar = () => {
               <textarea
                 name="text"
                 className="form-post__textarea"
+                maxlength="280"
                 onChange={changed}
               />
             </div>
@@ -158,14 +159,14 @@ export const SideBar = () => {
                 type="file"
                 name="file0"
                 id="file"
-                className="form-post__image"
+                className="form__inputAvatar small"
               />
             </div>
 
             <input
               type="submit"
               value="Enviar"
-              className="form-post__btn-submit"
+              className="btn"
             />
           </form>
         </div>
