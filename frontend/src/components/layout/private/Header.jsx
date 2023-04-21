@@ -51,9 +51,6 @@ export const Header = () => {
             </button>
             <div className="dropdown-content">
               <NavLink to="/social/logout">Log out</NavLink>
-              <a href="/social/logout">l</a>
-              <a href="#">Link 2</a>
-              <a href="#">Link 3</a>
             </div>
           </div>
         </li>
