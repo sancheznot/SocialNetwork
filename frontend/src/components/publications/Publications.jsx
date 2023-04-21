@@ -62,7 +62,7 @@ export const Publications = ({ post, setPost, getPublic, date, datas }) => {
                   <button
                     onClick={() => deletePost(getpost._id)}
                     className="post__button">
-                    <i className="fa-solid fa-trash-can"></i>
+                    <span class="material-symbols-outlined">close</span>
                   </button>
                 </div>
               )}
@@ -72,7 +72,10 @@ export const Publications = ({ post, setPost, getPublic, date, datas }) => {
               <h4 className="post__content">{getpost.text}</h4>
               <div className="post__image">
                 {getpost.file && (
-                  <img className="post-images-responsive" src={`${Url}/public/media/${getpost.file}`} />
+                  <img
+                    className="post-images-responsive"
+                    src={`${Url}/public/media/${getpost.file}`}
+                  />
                 )}
               </div>
             </div>
