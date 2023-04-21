@@ -51,6 +51,7 @@ export const Header = () => {
             </button>
             <div className="dropdown-content">
               <NavLink to="/social/logout">Log out</NavLink>
+              
             </div>
           </div>
         </li>
