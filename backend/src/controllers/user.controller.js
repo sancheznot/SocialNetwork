@@ -1,23 +1,17 @@
 const userCtrls = {};
 const bycrypt = require("bcrypt");
 const User = require("../models/UserModel");
-const Publication = require("../models/PublicationModel")
-const Follow = require("../models/FollowModel")
+const Publication = require("../models/PublicationModel");
+const Follow = require("../models/FollowModel");
 const path = require("path");
 const fs = require("fs");
-const {paginate} = require("mongoose-pagination")
+const { paginate } = require("mongoose-pagination");
+const validateform = require("../helpers/validators");
 
 // helper token
 const { tokenGenerator } = require("../helpers/jwt");
 // helper follow
 const { IdServices, followThisUser } = require("../helpers/followServices");
-
-userCtrls.userpueba = (req, res) => {
-  res.status(200).send({
-    message: "funciona user",
-    user: req.user,
-  });
-};
 
 //      SINGUP
 userCtrls.signup = async (req, res) => {
@@ -49,6 +43,15 @@ userCtrls.signup = async (req, res) => {
     });
     return;
   }
+  // validate advanced form
+  try {
+    validateform(req.body);
+  } catch (error) {
+    return res
+      .status(500) 
+      .json({ status: "Error 500", message: "Validation fails", error});
+  }
+
   //    duplicates user control
   User.find({
     $or: [{ email: email.toLowerCase() }, { username: username.toLowerCase() }],
@@ -62,7 +65,7 @@ userCtrls.signup = async (req, res) => {
       return res.status(200).send({
         status: "Success",
         message: "User already exists",
-        errors
+        errors,
       });
     }
     const userSave = new User({ name, username, email, password });
@@ -80,7 +83,7 @@ userCtrls.signup = async (req, res) => {
         status: "Success",
         message: "Register successfully",
         user: userStored,
-        errors
+        errors,
       });
     });
   });
@@ -121,7 +124,7 @@ userCtrls.signin = async (req, res) => {
           status: "Success",
           message: "Signin successfully",
           user: { id: user._id, name: user.name, username: user.email },
-          token
+          token,
         });
       });
   } else if (!email) {
@@ -194,7 +197,7 @@ userCtrls.userList = (req, res) => {
   // ask with mongoose pagination
   let itemsPerPage = 5;
   User.find()
-    .select({ password: 0, email: 0 , __v: 0  })
+    .select({ password: 0, email: 0, __v: 0 })
     .sort("_id")
     .paginate(page, itemsPerPage, async (error, users, total) => {
       if (error || !users) {
@@ -252,18 +255,18 @@ userCtrls.updateProfile = (req, res) => {
         message: "User already exists",
       });
     }
-    if(userToUpdate.email === '' || userToUpdate.username === null){
-      delete userToUpdate.email
+    if (userToUpdate.email === "" || userToUpdate.username === null) {
+      delete userToUpdate.email;
     }
-    if(userToUpdate.username === '' || userToUpdate.username === null){
-      delete userToUpdate.username
+    if (userToUpdate.username === "" || userToUpdate.username === null) {
+      delete userToUpdate.username;
     }
 
     // if get the password encryted
     if (userToUpdate.password) {
       let pwd = await bycrypt.hash(userToUpdate.password, 10);
       userToUpdate.password = pwd;
-    }else{
+    } else {
       delete userToUpdate.password;
     }
     try {
@@ -369,15 +372,15 @@ userCtrls.showAvatar = (req, res) => {
   });
 };
 
-userCtrls.counter = async(req, res) => {
-  let userId = req.user
-  if(req.params.id){
-    userId = req.params.id
+userCtrls.counter = async (req, res) => {
+  let userId = req.user;
+  if (req.params.id) {
+    userId = req.params.id;
   }
-  try{
-    const following = await Follow.count({"user": userId})
-    const followed = await Follow.count({"followed": userId})
-    const publications = await Publication.count({"user": userId})
+  try {
+    const following = await Follow.count({ user: userId });
+    const followed = await Follow.count({ followed: userId });
+    const publications = await Publication.count({ user: userId });
 
     return res.status(200).json({
       status: "Success",
@@ -386,12 +389,12 @@ userCtrls.counter = async(req, res) => {
       following: following,
       followed: followed,
       publications,
-    })
-  }catch(err) {
+    });
+  } catch (err) {
     return res.status(500).json({
       status: "Error",
-      message: "Failed to get user"
-    })
+      message: "Failed to get user",
+    });
   }
-}
+};
 module.exports = userCtrls;
